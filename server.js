@@ -22,11 +22,11 @@ app.init = function () {
       app.use(require('koa-livereload')());
       break;
     case 'production':
-      app.use(require('koa-gzip'));
-      app.use(require('koa-fresh'));
-      app.use(require('koa-etag'));
+      app.use(require('koa-gzip')());
+      app.use(require('koa-fresh')());
+      app.use(require('koa-etag')());
       app.use(require('koa-log4js')({
-        filename: config.logs
+        file: require('path').relative(config.folder.root, config.logs)
       }));
       app.use(function* (next){
         // Respect DNT, lead by example
@@ -44,16 +44,17 @@ app.init = function () {
 
     try {
       yield next;
-    } catch (e) {
-      e.code = e.code || 500;
-      this.code = e.code;
-      this.locals.error = e;
+    } catch (err) {
+      err.code = err.code || 500;
+      err.message = err.message || 'server error';
+      this.code = err.code;
+      this.locals.error = err;
       yield this.render('error');
     }
   });
   app.use(routes());
   app.listen(config.port, function () {
-    console.info(app.name, 'listening on port', config.port);
+    console.info(app.name, 'listening on port', config.port, 'in', config.environment, 'environment');
   });
 };
 

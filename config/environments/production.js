@@ -5,6 +5,9 @@ module.exports = {
     db: 'blog'
   },
   assets: {
+    options: {
+      maxAge: 24 * 60 * 60 // 24 hours
+    },
     styles: ['/dist/styles/styles.css']
   }
 };

@@ -2,9 +2,8 @@
 
 var _ = require('lodash'),
   path = require('path'),
-  // glob = require('glob'),
   options = {
-    logs: path.resolve(process.env.LOGDIR || process.env.HOME, 'blog-static.log'),
+    logs: path.resolve(process.env.LOG_DIR || process.env.HOME, (process.env.LOG_FILE||'blog-static.log')),
     database: {
       host: 'localhost',
       port: 28015
@@ -29,12 +28,6 @@ var _ = require('lodash'),
         gzip: true,
         buffer: true
       },
-      styles: [
-        '/styles/pure.css',
-        '/styles/grids-responsive.css',
-        '/styles/blog.css',
-        '/styles/syntax-highlighting.css'
-      ],
       glob: {
         styles: 'styles/*.css'
       }
@@ -42,8 +35,5 @@ var _ = require('lodash'),
   };
 
 _.merge(options, require('./environments/' + options.environment));
-// options.assets.styles = glob.sync(options.assets.glob.styles, {
-//   cwd: options.folder.public
-// });
 
 module.exports = options;

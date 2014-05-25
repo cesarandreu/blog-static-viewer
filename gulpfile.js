@@ -8,10 +8,12 @@ switch (config.environment) {
   case 'development':
     var nodemon = require('gulp-nodemon');
     var livereload = require('gulp-livereload');
+    var openurl = require('openurl');
+    var url = require('url');
     break;
   case 'production':
     var mincss = require('gulp-minify-css');
-    var filelog = require('gulp-filelog');
+    var concat = require('gulp-concat');
     break;
 }
 
@@ -25,11 +27,20 @@ gulp.task('serve', ['livereload'], function () {
     },
     ignore: ['node_modules/**', '.git']
   })
+  .on('start', function() {
+    setTimeout(function() {
+      openurl.open(url.format({
+        protocol: 'http',
+        hostname: 'localhost',
+        port: config.port
+      }));
+    }, 250);
+  })
   .on('restart', function (files) {
     if (lr && files.length) {
       setTimeout(function() {
         lr.changed(files[0]);
-      }, 100);
+      }, 250);
     }
   });
 });
@@ -46,12 +57,9 @@ gulp.task('livereload', function () {
 });
 
 gulp.task('build', function () {
-  console.log('styles', config.assets.glob.styles);
-  console.log('build', config.folder.build);
   return gulp
   .src(config.assets.glob.styles, {cwd: config.folder.public})
-  .pipe(filelog())
   .pipe(mincss())
-  .pipe(gulp.dest(config.folder.build));
+  .pipe(concat('styles.css'))
+  .pipe(gulp.dest('dist/styles', {cwd: config.folder.public}));
 });
-

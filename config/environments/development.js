@@ -10,6 +10,13 @@ module.exports = {
   assets: {
     options: {
       buffer: false
-    }
+    },
+    // Order matters
+    styles: [
+      '/styles/pure.css',
+      '/styles/pure.grids-responsive.css',
+      '/styles/theme.css',
+      '/styles/syntax-highlighting.css'
+    ]
   }
 };
