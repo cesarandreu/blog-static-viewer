@@ -1,0 +1,64 @@
+'use strict';
+
+var koa = require('koa'),
+  views = require('koa-views'),
+  staticCache = require('koa-static-cache'),
+  rethinkdb = require('rethinkdbdash-unstable'),
+  routes = require('./app/routes'),
+  config = require('./config'),
+  app = koa();
+
+app.name = 'blog-viewer-static';
+app.init = function () {
+  app.assets = {
+    styles: config.assets.styles
+  };
+  app.config = config;
+  app.db = rethinkdb(config.database);
+  app.env = config.environment;
+  switch (app.env) {
+    case 'development':
+      app.use(require('koa-logger')());
+      app.use(require('koa-livereload')());
+      break;
+    case 'production':
+      app.use(require('koa-gzip'));
+      app.use(require('koa-fresh'));
+      app.use(require('koa-etag'));
+      app.use(require('koa-log4js')({
+        filename: config.logs
+      }));
+      app.use(function* (next){
+        // Respect DNT, lead by example
+        // info: http://en.wikipedia.org/wiki/Do_Not_Track
+        this.locals = this.locals || {};
+        this.locals.analytics = this.header.dnt !== '1';
+        yield next;
+      });
+      break;
+  }
+  app.use(views(config.folder.views, config.views));
+  app.use(staticCache(config.folder.public, config.assets.options));
+  app.use(function* (next) {
+    this.locals.styles = this.app.assets.styles;
+
+    try {
+      yield next;
+    } catch (e) {
+      e.code = e.code || 500;
+      this.code = e.code;
+      this.locals.error = e;
+      yield this.render('error');
+    }
+  });
+  app.use(routes());
+  app.listen(config.port, function () {
+    console.info(app.name, 'listening on port', config.port);
+  });
+};
+
+exports.app = app;
+exports.config = config;
+if (!module.parent) {
+  app.init();
+}

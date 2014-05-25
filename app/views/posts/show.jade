@@ -1,0 +1,45 @@
+extends ../layout
+
+block content
+  .posts
+    //- Future idea: breadcrumbs?
+    //- Being able to go to the header to click Posts and go back is nice
+    //- Example:
+    //- Posts > Post Title
+    h1.content-subhead Post
+    if post
+      article.post
+        header.post-header
+          //- The titles in the index train people to click on them to get the link
+          //- so you should be able to click the title here as well
+          h2.post-title
+            a.post-title-link(href='/posts/#{post.name}', title='#{post.title}') #{post.title}
+          .post-information
+            a.post-permalink(href='/posts/#{post.name}', title='permalink')
+              | Posted on&nbsp;
+              time.post-date(datetime='#{post.createdAt.toISOString()}') #{post.createdAt.toUTCString()}
+            //- TODO: tags
+            //- p.post-meta
+            //-   | Tags&nbsp;
+            //-   each tag in post.tags
+            //-     a.post-category(href='/tag/#{tag}', title='#{tag}') #{tag}
+
+            //- TODO: description
+
+        section.post-content
+          != post.content
+
+        section.post-comments
+          #disqus_thread
+          script.
+            var disqus_shortname = 'cesarandreu-blog',
+              disqus_identifier = '!{post.name}';
+            (function() {
+                var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+                dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+                (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+            })();
+          noscript Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a>
+
+    else
+      h1 #{status} - #{message}

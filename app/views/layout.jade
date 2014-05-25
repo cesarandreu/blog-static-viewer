@@ -1,0 +1,40 @@
+doctype html
+html(lang='en-US')
+  head
+    meta(charset="utf-8")
+    meta(http-equiv="X-UA-Compatible", content="IE=edge,chrome=1")
+    meta(name="viewport" content="width=device-width, initial-scale=1")
+    meta(name="description", content="not a blog, by Cesar Andreu")
+    base(href='/')
+    title= title || 'not a blog'
+    include styles
+    if analytics
+      script.
+        (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+        (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+        m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+        })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+        ga('create', 'UA-20550824-2', 'cesarandreu.com');
+        ga('send', 'pageview');
+
+  body
+    #layout.pure-g
+      .sidebar.pure-u-1.pure-u-md-1-4
+        header.header
+          hgroup
+            h1.brand-title Cesar Andreu
+            h2.brand-tagline not a blog
+          nav.nav
+            ul.nav-list
+              li.nav-item
+                a.pure-button(href='/', title='home') home
+              li.nav-item
+                a.pure-button(href='/about', title='about') about
+              //- li.nav-item
+              //-   a.pure-button(href='/tags') Tags
+      .content.pure-u-1.pure-u-md-3-4
+        main
+          block content
+        footer
+          include footer

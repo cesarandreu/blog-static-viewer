@@ -1,0 +1,29 @@
+extends ../layout
+
+block content
+  .posts
+    h1.content-subhead Posts
+    if posts.length
+      each post in posts
+        section.post
+          header.post-header
+            h2.post-title
+              a.post-title-link(href='/posts/#{post.name}', title='#{post.title}') #{post.title}
+            .post-information
+              a.post-permalink(href='/posts/#{post.name}', title='permalink')
+                | Posted on&nbsp;
+                time.post-date(datetime='#{post.createdAt.toISOString()}') #{post.createdAt.toUTCString()}
+              //- TODO: tags
+              //- .post-meta
+              //-   | Tags&nbsp;
+              //-   each tag in post.tags
+              //-     a.post-category(href='/tags/#{tag}') #{tag}
+    else
+      h1 No posts found
+
+    .post-navigation
+      - page = parseInt(page, 10);
+      if page > 1
+        a.pure-button(href='/posts?page=#{page - 1}') newer
+      if hasMorePosts
+        a.pure-button(href='/posts?page=#{page + 1}') older
