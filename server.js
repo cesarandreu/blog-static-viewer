@@ -28,13 +28,6 @@ app.init = function () {
       app.use(require('koa-log4js')({
         file: require('path').relative(config.folder.root, config.logs)
       }));
-      app.use(function* (next){
-        // Respect DNT, lead by example
-        // info: http://en.wikipedia.org/wiki/Do_Not_Track
-        this.locals = this.locals || {};
-        this.locals.analytics = this.header.dnt !== '1';
-        yield next;
-      });
       break;
   }
   app.use(views(config.folder.views, config.views));
